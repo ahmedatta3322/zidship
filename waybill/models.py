@@ -1,5 +1,7 @@
+from django.dispatch import receiver
 from zidship.base import BaseModel
 from django.db import models
+import uuid
 
 # Create your BaseModel here.
 class WayBill(BaseModel):
@@ -9,23 +11,25 @@ class WayBill(BaseModel):
     """
 
     # Way Bill Number
-    way_bill_number = models.CharField(max_length=255, unique=True)
+    way_bill_number = models.UUIDField(
+        max_length=255, unique=True, default=uuid.uuid4, editable=False
+    )
 
     # Way Bill Label
     way_bill_label = models.CharField(max_length=255)
 
-    carrier = models.OneToOneField("carrier.Carrier", on_delete=models.CASCADE)
+    carrier = models.ForeignKey("carrier.Carrier", on_delete=models.CASCADE)
     # Shipper
-    sender = models.OneToOneField("Sender", on_delete=models.CASCADE)
+    sender = models.ForeignKey("Sender", on_delete=models.CASCADE)
 
     # Receiver
-    receiver = models.OneToOneField("Receiver", on_delete=models.CASCADE)
+    receiver = models.ForeignKey("Receiver", on_delete=models.CASCADE)
 
     # Shipment
     shipment = models.OneToOneField("Shipment", on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.way_bill_number
+        return self.way_bill_label
 
 
 class Sender(BaseModel):
@@ -39,7 +43,7 @@ class Sender(BaseModel):
     state = models.CharField(max_length=100)
     zip_code = models.CharField(max_length=100)
     phone = models.CharField(max_length=100)
-    email = models.CharField(max_length=100)
+    email = models.CharField(max_length=100, unique=True)
 
     class Meta:
         verbose_name_plural = "Senders"
@@ -59,7 +63,7 @@ class Receiver(BaseModel):
     state = models.CharField(max_length=100)
     zip_code = models.CharField(max_length=100)
     phone = models.CharField(max_length=100)
-    email = models.CharField(max_length=100)
+    email = models.CharField(max_length=100, unique=True)
 
     class Meta:
         verbose_name_plural = "Receivers"
@@ -94,8 +98,12 @@ class Shipment(BaseModel):
     Shipment Sections
     """
 
+    statuses = ("In Transit", "Delivered", "Cancelled", "Returned")
+
     # Shipment Number
-    shipment_number = models.CharField(max_length=255, unique=True)
+    shipment_number = models.UUIDField(
+        max_length=255, unique=True, default=uuid.uuid4, editable=False
+    )
     # Fragile
     fragile = models.BooleanField(default=False)
     # Shipment Date
@@ -104,10 +112,10 @@ class Shipment(BaseModel):
     shipment_type = models.CharField(max_length=100)  # e.g. "Air", "Ground", "Sea"
     # Shipment Status
     shipment_status = models.CharField(
-        max_length=100
+        max_length=100, choices=tuple([(status, status) for status in statuses])
     )  # e.g. "Pending", "In Transit", "Delivered"
     # Shipment Notes
     shipment_notes = models.CharField(max_length=300)
 
     def __str__(self):
-        return self.shipment_number
+        return str(self.shipment_number)

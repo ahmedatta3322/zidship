@@ -7,3 +7,8 @@ class CarrierSerializer(serializers.ModelSerializer):
         model = Carrier
         fields = "__all__"
 
+
+class CarrierFunctionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CarrierFunction
+        fields = "__all__"

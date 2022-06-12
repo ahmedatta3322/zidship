@@ -14,7 +14,7 @@ class Carrier(BaseModel):
     state = models.CharField(max_length=100)
     zip_code = models.CharField(max_length=100)
     phone = models.CharField(max_length=100)
-    email = models.CharField(max_length=100)
+    email = models.CharField(max_length=100, unique=True)
     carrier_functions = models.ManyToManyField("CarrierFunction", blank=True)
 
     class Meta:

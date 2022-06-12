@@ -6,6 +6,10 @@ name = "pypi"
 [packages]
 django = "*"
 fpdf = "*"
+djangorestframework = "*"
+markdown = "*"
+django-filter = "*"
+decouple = "*"
 
 [dev-packages]
 
