@@ -14,12 +14,12 @@ class WayBill(BaseModel):
     # Way Bill Label
     way_bill_label = models.CharField(max_length=255)
 
-    carrier = models.ForeignKey("carrier.Carrier", on_delete=models.CASCADE)
+    carrier = models.OneToOneField("carrier.Carrier", on_delete=models.CASCADE)
     # Shipper
-    sender = models.ForeignKey("Sender", on_delete=models.CASCADE)
+    sender = models.OneToOneField("Sender", on_delete=models.CASCADE)
 
     # Receiver
-    receiver = models.ForeignKey("Receiver", on_delete=models.CASCADE)
+    receiver = models.OneToOneField("Receiver", on_delete=models.CASCADE)
 
     # Shipment
     shipment = models.OneToOneField("Shipment", on_delete=models.CASCADE)
@@ -44,6 +44,9 @@ class Sender(BaseModel):
     class Meta:
         verbose_name_plural = "Senders"
 
+    def __str__(self):
+        return self.name
+
 
 class Receiver(BaseModel):
     """
@@ -61,6 +64,9 @@ class Receiver(BaseModel):
     class Meta:
         verbose_name_plural = "Receivers"
 
+    def __str__(self):
+        return self.name
+
 
 class Package(BaseModel):
 
@@ -71,9 +77,15 @@ class Package(BaseModel):
     weight = models.FloatField()
     package_type = models.CharField(max_length=100)
     description = models.CharField(max_length=300)
+    shipment = models.ForeignKey(
+        "Shipment", on_delete=models.CASCADE, related_name="packages"
+    )
 
     class Meta:
         verbose_name_plural = "Packages"
+
+    def __str__(self):
+        return self.package_type
 
 
 class Shipment(BaseModel):
@@ -96,5 +108,6 @@ class Shipment(BaseModel):
     )  # e.g. "Pending", "In Transit", "Delivered"
     # Shipment Notes
     shipment_notes = models.CharField(max_length=300)
-    # Shipment Package
-    shipment_package = models.ForeignKey("Package", on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.shipment_number

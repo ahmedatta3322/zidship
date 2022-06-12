@@ -15,6 +15,7 @@ class Carrier(BaseModel):
     zip_code = models.CharField(max_length=100)
     phone = models.CharField(max_length=100)
     email = models.CharField(max_length=100)
+    carrier_functions = models.ManyToManyField("CarrierFunction", blank=True)
 
     class Meta:
         verbose_name_plural = "Carriers"
@@ -36,3 +37,18 @@ class Carrier(BaseModel):
 
     def get_waybills_count(self):
         return WayBill.objects.filter(carrier=self).count()
+
+
+class CarrierFunction(BaseModel):
+    """
+    Carrier Function Sections
+    """
+
+    name = models.CharField(max_length=100)
+    description = models.CharField(max_length=100)
+
+    class Meta:
+        verbose_name_plural = "Carrier Functions"
+
+    def __str__(self):
+        return self.name
