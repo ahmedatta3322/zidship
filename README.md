@@ -16,7 +16,7 @@ Install the project with pip , pipenv
   We are Using PIPENV as a package manager
 
 ```bash
-cd Poll
+cd zidship
 
 pip install pipenv
 
